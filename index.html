@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4to mes 💖</title>
+<link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/424/424783.png">
+
+<!-- Librería de animaciones -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<style>
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(180deg, #ffd6e0, #ffeef3);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Pantallas */
+  .screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+  .active { display: flex; }
+
+  /* Pantalla de login */
+  input[type="password"] {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 20px;
+    font-size: 18px;
+    outline: none;
+    text-align: center;
+  }
+  button {
+    margin-top: 16px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 20px;
+    background-color: #ff6b81;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:active {
+    transform: scale(0.96);
+  }
+
+  /* Título */
+  h2 {
+    color: #ff4d6d;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  
+  h4 {
+    color: #ff4d6d;
+    text-align: center;
+	margin-bottom: 24px;
+  }
+
+  /* Foto */
+  .photo {
+    width: 280px;
+    height: 280px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+  }
+  .photo:active {
+    transform: scale(0.95);
+  }
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Popup Spotify */
+  .popup {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .popup-content {
+    background: white;
+    border-radius: 20px;
+    padding: 10px;
+    width: 90%;
+    max-width: 400px;
+    animation: fadeInUp 0.6s;
+  }
+  iframe {
+    width: 100%;
+    height: 352px;
+    border: none;
+    border-radius: 12px;
+  }
+  .close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+  }
+  
+  /* Loader */
+  .loader {
+    border: 4px solid #ffeef3;
+    border-top: 4px solid #ff6b81;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Pantalla 1: Clave -->
+<div id="screen1" class="screen active animate__animated animate__fadeIn">
+  <h2>💌 Ingresá la clave secreta</h2>
+  <input id="password" type="password" placeholder="••••••••">
+  <button onclick="checkPassword()">Entrar</button>
+</div>
+
+<!-- Pantalla 2: Foto -->
+<div id="screen2" class="screen animate__animated animate__fadeIn">
+  <h2>🌹 Para mi persona favorita 🌹</h2>
+  <h4>Canciones que me recuerdan a ti</h4>
+  <div class="photo animate__animated" onclick="showPopup()">
+    <img src="image.jpeg" alt="nosotros">
+  </div>
+</div>
+
+<!-- Popup Spotify -->
+<div id="popup" class="popup">
+  <div class="close" onclick="closePopup()">×</div>
+  <div class="popup-content animate__animated animate__fadeInUp">
+    <iframe id="spotifyFrame"
+      data-testid="embed-iframe"
+      style="border-radius:12px"
+      src=""
+      width="100%" height="352"
+      frameborder="0"
+      allowfullscreen=""
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy">
+    </iframe>
+  </div>
+</div>
+
+<script>
+  const SECRET = "calimocho2025";
+  const KEY = "loveAccessGranted";
+  const PLAYED_KEY = "playedSongs";
+
+  // 🎵 Lista de canciones posibles
+  const SONGS = [
+    { id: 1, url: "https://open.spotify.com/embed/track/2SvDLzteN95JSoKKKmCbcR?utm_source=generator" },
+    { id: 2, url: "https://open.spotify.com/embed/track/2qEoAz0i6yEz5dPggABcLH?utm_source=generator" },
+    { id: 3, url: "https://open.spotify.com/embed/track/4HROhSVnkWl1o6DGk1Pb80?utm_source=generator" },
+    { id: 4, url: "https://open.spotify.com/embed/track/0sz1wmBpB9gKh9zFV9YMFe?utm_source=generator" },
+    { id: 5, url: "https://open.spotify.com/embed/track/4cVQcTUWnlogdiEKp3gU79?utm_source=generator" },
+    { id: 6, url: "https://open.spotify.com/embed/track/3UEs83vjOBXpzGUzCozijk?utm_source=generator" },
+    { id: 7, url: "https://open.spotify.com/embed/track/4bC5KjPjgwGcp3wJBQMvuX?utm_source=generator" },
+    { id: 8, url: "https://open.spotify.com/embed/track/5gkSbR9E0jDgv65XeT5v5R?utm_source=generator" },
+    { id: 9, url: "https://open.spotify.com/embed/track/6yrHcAjJj6Dz58dRBsOLWT?utm_source=generator" }
+  ];
+
+  // 🩷 Si ya tiene acceso, salteamos el login
+  window.addEventListener("DOMContentLoaded", () => {
+    const access = localStorage.getItem(KEY);
+    if (access === "true") showSecondScreen();
+  });
+
+  function checkPassword() {
+    const input = document.getElementById("password").value.toLowerCase();
+    if (input === SECRET) {
+      localStorage.setItem(KEY, "true");
+      showSecondScreen();
+    } else {
+      alert("Clave incorrecta 💔");
+    }
+  }
+
+  function showSecondScreen() {
+    document.getElementById("screen1").classList.remove("active");
+    document.getElementById("screen2").classList.add("active");
+  }
+
+  function getRandomSong() {
+    // Cargar lista de canciones ya reproducidas
+    let played = JSON.parse(localStorage.getItem(PLAYED_KEY)) || [];
+
+    // Si ya se escucharon todas, resetear
+    if (played.length >= SONGS.length) {
+      played = [];
+    }
+
+    // Filtrar las que no se han reproducido
+    const remaining = SONGS.filter(song => !played.includes(song.id));
+
+    // Elegir una canción aleatoria de las restantes
+    const randomSong = remaining[Math.floor(Math.random() * remaining.length)];
+
+    // Agregar el id a la lista y guardar en localStorage
+    played.push(randomSong.id);
+    localStorage.setItem(PLAYED_KEY, JSON.stringify(played));
+
+    return randomSong.url;
+  }
+
+  function showPopup() {
+    const popup = document.getElementById("popup");
+    const content = document.querySelector(".popup-content");
+    const iframe = document.getElementById("spotifyFrame");
+
+    // Limpia el contenido y muestra el loader
+    content.innerHTML = '<div class="loader"></div>';
+    popup.style.display = "flex";
+
+    // Espera 1 segundo y luego carga la canción
+    setTimeout(() => {
+      const songUrl = getRandomSong();
+      content.innerHTML = `
+        <iframe id="spotifyFrame"
+          data-testid="embed-iframe"
+          style="border-radius:12px"
+          src="${songUrl}"
+          width="100%" height="352"
+          frameborder="0"
+          allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy">
+        </iframe>
+      `;
+    }, 1000);
+  }
+
+
+  function closePopup() {
+    document.getElementById("popup").style.display = "none";
+  }
+</script>
+
+
+</body>
+</html>
