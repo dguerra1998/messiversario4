@@ -253,6 +253,13 @@
 	  const popup = document.getElementById("popup");
 	  const content = document.querySelector(".popup-content");
 
+	   // 🔹 Track del click en la imagen
+	  gtag('event', 'click_image', {
+	    event_category: 'Engagement',
+	    event_label: 'Clicked Spotify song generator',
+	    value: 1
+	  });
+
 	  // Activa el glow permanente
 	  photo.classList.add("glow-active");
 
@@ -289,5 +296,6 @@
 
 </body>
 </html>
+
 
 
