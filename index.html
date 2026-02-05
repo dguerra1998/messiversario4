@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Think of you 💖</title>
 
   <style>
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Poppins", sans-serif;
-      background: linear-gradient(180deg, #fff0f5, #ffe4ec);
-      height: 100vh;
+      background: linear-gradient(180deg, #ffe0ea, #ffd1e1);
+      min-height: 100vh;
     }
 
     .screen {
@@ -18,12 +18,12 @@
       flex-direction: column;
       align-items: center;
       padding: 16px;
-      height: 100%;
-      overflow-y: auto;
-	  padding-top: 50px;
+      padding-top: 50px;
     }
 
-    .active { display: flex; }
+    .active {
+      display: flex;
+    }
 
     h2, h4 {
       color: #ff4d6d;
@@ -51,15 +51,18 @@
       cursor: pointer;
     }
 
-    button:active { transform: scale(0.96); }
+    button:active {
+      transform: scale(0.96);
+    }
 
     .photo {
       width: 260px;
-      height: 260px;
+      aspect-ratio: 1 / 1;
       border-radius: 28px;
       overflow: hidden;
-      box-shadow: 0 14px 34px rgba(255,77,109,0.25);
+      box-shadow: 0 14px 34px rgba(255, 77, 109, 0.25);
       margin-bottom: 16px;
+      flex-shrink: 0;
     }
 
     .photo img {
@@ -68,16 +71,16 @@
       object-fit: cover;
     }
 
-    /* CONTENEDOR */
     .songs-container {
       width: 100%;
       max-width: 420px;
-      background: rgba(255,255,255,0.75);
+      background: rgba(255, 255, 255, 0.8);
       backdrop-filter: blur(14px);
       border-radius: 22px;
-      box-shadow: 0 12px 30px rgba(255,77,109,0.15);
+      box-shadow: 0 12px 30px rgba(255, 77, 109, 0.15);
       overflow: hidden;
-      margin-bottom: 40px;
+      margin-bottom: 60px;
+	  margin-top: 10px;
       display: none;
     }
 
@@ -85,7 +88,6 @@
       display: block;
     }
 
-    /* LOADER FALSO */
     .songs-loader {
       height: 120px;
       display: none;
@@ -101,25 +103,25 @@
       width: 34px;
       height: 34px;
       border-radius: 50%;
-      border: 3px solid rgba(255,77,109,0.25);
+      border: 3px solid rgba(255, 77, 109, 0.25);
       border-top-color: #ff4d6d;
       animation: spin 0.9s linear infinite;
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
-    /* LISTA */
     .songs-list {
-      max-height: 320px;
+      max-height: 440px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
     }
 
     .song-item {
-      position: relative;
       cursor: pointer;
     }
 
@@ -130,7 +132,6 @@
       border: none;
     }
 
-    /* PLACEHOLDER */
     .iframe-placeholder {
       height: 80px;
       display: flex;
@@ -154,11 +155,10 @@
       100% { background-position: 400px 0; }
     }
 
-    /* POPUP */
     .popup {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0, 0, 0, 0.6);
       display: none;
       align-items: center;
       justify-content: center;
@@ -195,16 +195,16 @@
 
 <div id="screen1" class="screen active">
   <h2>💌 Ingresá la clave secreta</h2>
-  <input id="password" type="password">
+  <input id="password" type="password" />
   <button onclick="checkPassword()">Entrar</button>
 </div>
 
 <div id="screen2" class="screen">
-  <h2>🌹 Para mi persona favorita 🌹</h2>
+  <h2>🌹 Para ti, linda 🌹</h2>
   <h4>Canciones que me hacen pensar en vos, mi niña</h4>
 
   <div class="photo">
-    <img src="image.jpeg">
+    <img src="image.jpeg" />
   </div>
 
   <button onclick="playRandomSong()">🎲 Sorpréndeme</button>
@@ -226,8 +226,7 @@
 <script>
   const SECRET = "calimocho2025";
   const KEY = "loveAccessGranted";
-  const PLAYED_KEY = "playedSongs";
-
+  
   const SONGS = [
     { id: 1, url: "https://open.spotify.com/embed/track/2SvDLzteN95JSoKKKmCbcR?utm_source=generator" },
     { id: 2, url: "https://open.spotify.com/embed/track/2qEoAz0i6yEz5dPggABcLH?utm_source=generator" },
@@ -278,6 +277,7 @@
 	{ id: 46, url: "https://open.spotify.com/embed/track/14OsvO7eecMfOIdRClquk9?utm_source=generator" }
   ];
 
+
   let songsRendered = false;
 
   window.addEventListener("DOMContentLoaded", () => {
@@ -305,9 +305,8 @@
     }
 
     container.classList.add("visible");
-
-    // 👉 LOADER FALSO
     loader.classList.add("visible");
+
     setTimeout(() => loader.classList.remove("visible"), 1000);
 
     if (!songsRendered) {
@@ -318,9 +317,8 @@
 
   function renderSongsList() {
     const list = document.getElementById("songsList");
-    const sorted = [...SONGS].sort((a, b) => b.id - a.id);
 
-    sorted.forEach(song => {
+    SONGS.slice().reverse().forEach(song => {
       const item = document.createElement("div");
       item.className = "song-item";
       item.dataset.src = song.url;
@@ -338,27 +336,30 @@
 
   function openSong(url) {
     popup.style.display = "flex";
-    popupContent.innerHTML = `<iframe src="${url}"></iframe>`;
+    popupContent.innerHTML = `<iframe src="${url}" allow="encrypted-media"></iframe>`;
   }
 
   function closePopup() {
     popup.style.display = "none";
   }
 
-  const observer = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const item = entry.target;
-        if (!item.querySelector("iframe")) {
-          item.innerHTML = `<iframe src="${item.dataset.src}" allow="encrypted-media"></iframe>`;
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const item = entry.target;
+          if (!item.querySelector("iframe")) {
+            item.innerHTML = `<iframe src="${item.dataset.src}" allow="encrypted-media"></iframe>`;
+          }
+          obs.unobserve(item);
         }
-        obs.unobserve(item);
-      }
-    });
-  }, {
-    root: document.querySelector(".songs-list"),
-    rootMargin: "50px"
-  });
+      });
+    },
+    {
+      root: document.querySelector(".songs-list"),
+      rootMargin: "80px"
+    }
+  );
 </script>
 
 </body>
